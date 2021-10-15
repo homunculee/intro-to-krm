@@ -13,8 +13,14 @@ resource "google_sql_database_instance" "cymbal-dev" {
   database_version = "POSTGRES_12"
   region           =  "us-east1"
 
+  depends_on = [google_service_networking_connection.private_vpc_connection]
+
   settings {
     tier = "db-custom-1-3840"
+    ip_configuration {
+      ipv4_enabled = false
+      private_network      = "projects/${var.project_id}/global/networks/cymbal-peering-network"
+    }
   }
 }
 
@@ -50,8 +56,14 @@ resource "google_sql_database_instance" "cymbal-staging" {
   database_version = "POSTGRES_12"
   region           = "us-central1"
 
+  depends_on = [google_service_networking_connection.private_vpc_connection]
+
   settings {
     tier = "db-custom-1-3840"
+    ip_configuration {
+      ipv4_enabled    = false
+      private_network      = "projects/${var.project_id}/global/networks/cymbal-peering-network"
+    }
   }
 }
 
@@ -85,8 +97,14 @@ resource "google_sql_database_instance" "cymbal-prod" {
   database_version = "POSTGRES_12"
   region           = "us-west1"
 
+  depends_on = [google_service_networking_connection.private_vpc_connection]
+
   settings {
     tier = "db-custom-1-3840"
+    ip_configuration {
+      ipv4_enabled = false
+      private_network      = "projects/${var.project_id}/global/networks/cymbal-peering-network"
+    }
   }
 }
 

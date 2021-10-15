@@ -22,12 +22,22 @@ resource "google_container_cluster" "admin" {
   remove_default_node_pool = true
   initial_node_count = 1
 
+  # define the network
+  network = "projects/${var.project_id}/global/networks/cymbal-peering-network"
+
   #  all clusters have Workload Identity enabled, which allows you to connect 
   # a Google Service Account with specific roles to your Kubernetes Workloads. 
   # (instead of the default which is to have your GKE nodes have the default GCE 
   # service account - which has sweeping permissions on your project.)
   workload_identity_config {
     identity_namespace = "${var.project_id}.svc.id.goog"
+  }
+
+  node_config {
+    metadata = {
+      disable-legacy-endpoints = true
+      serial-port-logging-enable    = false
+    }
   }
 
   # the admin cluster has the Config Connector GKE add-on.  
@@ -70,7 +80,8 @@ resource "google_container_node_pool" "admin-nodes" {
     machine_type = "e2-standard-4"
     tags         = ["gke-node", "${var.project_id}-gke"]
     metadata = {
-      disable-legacy-endpoints = "true"
+      disable-legacy-endpoints = true
+      serial-port-logging-enable = false
     }
   }
 }
@@ -84,10 +95,18 @@ resource "google_container_cluster" "dev" {
   remove_default_node_pool = true
   initial_node_count = 1
 
+  network = "projects/${var.project_id}/global/networks/cymbal-peering-network"
+
   workload_identity_config {
     identity_namespace = "${var.project_id}.svc.id.goog"
   }
-
+  
+  node_config {
+    metadata = {
+      disable-legacy-endpoints = true
+      serial-port-logging-enable    = false
+    }
+  }
 }
 
 # Separately Managed Node Pool
@@ -117,7 +136,8 @@ resource "google_container_node_pool" "dev-nodes" {
     machine_type = "e2-standard-4"
     tags         = ["gke-node", "${var.project_id}-gke"]
     metadata = {
-      disable-legacy-endpoints = "true"
+      disable-legacy-endpoints = true
+      serial-port-logging-enable = false
     }
   }
 }
@@ -131,10 +151,18 @@ resource "google_container_cluster" "staging" {
   remove_default_node_pool = true
   initial_node_count = 1
 
+  network = "projects/${var.project_id}/global/networks/cymbal-peering-network"
+
   workload_identity_config {
     identity_namespace = "${var.project_id}.svc.id.goog"
   }
 
+  node_config {
+    metadata = {
+      disable-legacy-endpoints = true
+      serial-port-logging-enable    = false
+    }
+  }
 }
 
 # Separately Managed Node Pool
@@ -165,6 +193,7 @@ resource "google_container_node_pool" "staging-nodes" {
     tags         = ["gke-node", "${var.project_id}-gke"]
     metadata = {
       disable-legacy-endpoints = "true"
+      serial-port-logging-enable = "false"
     }
   }
 }
@@ -178,10 +207,18 @@ resource "google_container_cluster" "prod" {
   remove_default_node_pool = true
   initial_node_count = 1
 
+  network = "projects/${var.project_id}/global/networks/cymbal-peering-network"
+
   workload_identity_config {
     identity_namespace = "${var.project_id}.svc.id.goog"
   }
 
+  node_config {
+    metadata = {
+      disable-legacy-endpoints = true
+      serial-port-logging-enable    = false
+    }
+  }
 }
 
 # Separately Managed Node Pool
@@ -211,7 +248,8 @@ resource "google_container_node_pool" "prod-nodes" {
     machine_type = "e2-standard-4"
     tags         = ["gke-node", "${var.project_id}-gke"]
     metadata = {
-      disable-legacy-endpoints = "true"
+      disable-legacy-endpoints = true
+      serial-port-logging-enable = false
     }
   }
 }
